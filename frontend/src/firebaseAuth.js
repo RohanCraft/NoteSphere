@@ -10,26 +10,48 @@ import { doc, setDoc } from "firebase/firestore";
 
 // Register + save name in Firestore
 export const registerUser = async (name, email, password) => {
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
-  const user = userCredential.user;
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
 
-  await setDoc(doc(db, "users", user.uid), {
-    name: name || "",
-    email,
-    createdAt: new Date(),
-  });
+    // Store name + email in Firestore under users collection
+    await setDoc(doc(db, "users", user.uid), {
+      name: name || "",
+      email,
+      createdAt: new Date().toISOString(),
+    });
 
-  return user;
+    return user;
+  } catch (error) {
+    console.error("Error in registerUser:", error);
+    throw error; // pass it back to UI for toast
+  }
 };
 
-export const loginUser = (email, password) =>
-  signInWithEmailAndPassword(auth, email, password);
+// Login
+export const loginUser = async (email, password) => {
+  try {
+    return await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    console.error("Error in loginUser:", error);
+    throw error;
+  }
+};
 
-export const logoutUser = () => signOut(auth);
+// Logout
+export const logoutUser = async () => {
+  try {
+    return await signOut(auth);
+  } catch (error) {
+    console.error("Error in logoutUser:", error);
+    throw error;
+  }
+};
 
+// Auth state listener
 export const authStateListener = (callback) =>
   onAuthStateChanged(auth, callback);

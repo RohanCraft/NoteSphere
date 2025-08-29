@@ -7,7 +7,7 @@ import {
   FaLock,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig"; // <-- import db
 import { toast } from "react-toastify";
 import {
   signInWithEmailAndPassword,
@@ -15,6 +15,7 @@ import {
   updateProfile,
   fetchSignInMethodsForEmail,
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore"; // <-- import Firestore functions
 
 const Login = () => {
   const [page, setPage] = useState("signIn");
@@ -53,7 +54,16 @@ const Login = () => {
           password
         );
 
+        // Update displayName in Firebase Auth
         await updateProfile(userCredential.user, { displayName: name });
+
+        // ✅ Save name in Firestore
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+          name: name,
+          email: email,
+          createdAt: new Date(),
+        });
+
         toast.success("Account created successfully!");
       }
 
@@ -85,11 +95,8 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative">
-      {/* Transparent blur background */}
       <div className="fixed inset-0 backdrop-blur-sm z-0"></div>
-
       <div className="relative z-10 w-full max-w-3xl grid md:grid-cols-2 gap-6">
-        {/* Left side: Feature panel */}
         <div className="hidden md:flex flex-col justify-center bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-gray-200 shadow-lg space-y-6">
           <h2 className="text-2xl font-bold text-gray-800">
             Welcome to NoteSphere!
@@ -98,7 +105,6 @@ const Login = () => {
             Designed and built by <strong>Rohan Kumar Sahoo</strong>, NoteApp
             helps you manage your personal notes easily and securely.
           </p>
-
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <FaStickyNote className="text-blue-600 text-xl" />
@@ -115,7 +121,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right side: Login/Signup form */}
         <div
           className="bg-white/70 backdrop-blur-md rounded-2xl border border-gray-200 shadow-lg p-8
                         transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl"
@@ -135,7 +140,6 @@ const Login = () => {
                 onChange={(e) => setName(e.target.value)}
               />
             )}
-
             <input
               type="email"
               placeholder="Email"
@@ -144,7 +148,6 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}

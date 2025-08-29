@@ -140,30 +140,49 @@ const Notes = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-blue-900 text-white px-6 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-md">
-        <h1 className="text-xl font-semibold">NoteApp</h1>
+      <nav className="sticky top-0 z-50 bg-blue-900 text-white px-6 py-3 shadow-md">
+        {/* Mobile: flex-col; Laptop: flex-row */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex justify-between items-center w-full sm:w-auto">
+            <h1 className="text-xl font-semibold">NoteApp</h1>
 
-        {/* Search */}
-        <div className="flex justify-center w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search notes..."
-            className="w-full sm:w-72 px-4 py-2 rounded-lg bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </div>
+            {/* Mobile only: User name + Logout button */}
+            <div className="flex items-center gap-3 sm:hidden">
+              <span className="text-sm text-gray-200">
+                Hello,{" "}
+                <span className="font-medium">{userName || "Guest"}</span>
+              </span>
+              <button
+                onClick={logoutUser}
+                className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg text-sm shadow-sm transition"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
 
-        {/* User */}
-        <div className="flex items-center gap-4 justify-center sm:justify-end">
-          <span className="text-sm text-gray-200">
-            Hello, <span className="font-medium">{userName || "Guest"}</span>
-          </span>
-          <button
-            onClick={logoutUser}
-            className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm shadow-sm transition"
-          >
-            Logout
-          </button>
+          {/* Search bar below in mobile, inline on desktop */}
+          <div className="mt-3 sm:mt-0 flex justify-center w-full sm:w-auto">
+            <input
+              type="text"
+              placeholder="Search notes..."
+              className="w-full sm:w-72 px-4 py-2 rounded-lg bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+          </div>
+
+          {/* Desktop: User info on right */}
+          <div className="hidden sm:flex items-center gap-4 justify-end">
+            <span className="text-sm text-gray-200">
+              Hello, <span className="font-medium">{userName || "Guest"}</span>
+            </span>
+            <button
+              onClick={logoutUser}
+              className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm shadow-sm transition"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </nav>
 
